@@ -8,7 +8,7 @@ const { product } = defineProps<Props>()
 </script>
 
 <template>
-  <article class="group border rounded-md cursor-pointer relative">
+  <article class="group border rounded-md cursor-pointer relative bg-white">
     <img
       class="h-56 object-cover rounded-lg transition-transform transform scale-100 group-hover:scale-105"
       :src="product.images[0]"

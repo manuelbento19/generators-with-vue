@@ -1,6 +1,6 @@
 # generators-vue
 
-![Image Preview](/public/preview.png)
+![Image Preview](./public/preview.png)
 This project was developed to demonstrate how to create and use generators in JavaScript applications, exploring their functionality and benefits for asynchronous flow control and process optimization.
 
 ## Project Setup

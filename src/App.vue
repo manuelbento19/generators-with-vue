@@ -7,26 +7,28 @@ const products = ref<Product[]>([])
 
 async function* getProducts() {
   let skip = 0
-  const request = await fetch(`https://dummyjson.com/products?limit=30&skip=${skip}`)
-  const result = await request.json()
-  if (!result?.products || result.products?.length == 0) return []
-
-  yield result.products
-  skip += 30
+  while (true) {
+    const request = await fetch(`https://dummyjson.com/products?limit=30&skip=${skip}`)
+    const result = await request.json()
+    if (!result?.products || result.products?.length == 0) return []
+    yield result.products as Product[]
+    skip += 30
+  }
 }
 
 const paginateProducts = getProducts()
 
 onBeforeMount(async () => {
   const result = await paginateProducts.next()
-  products.value = [...products.value, ...(result.value as Product[])]
+  products.value = [...products.value, ...result.value]
 })
+
 onMounted(() => {
   const productSection = document.querySelector('#product-section')! as HTMLDivElement
   productSection.addEventListener('scroll', async () => {
     if (productSection.scrollHeight - productSection.scrollTop == productSection.offsetHeight) {
       const result = await paginateProducts.next()
-      products.value = [...products.value, ...(result.value as Product[])]
+      products.value = [...products.value, ...result.value]
     }
   })
 })

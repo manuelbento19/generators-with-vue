@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { onBeforeMount, onMounted, ref } from 'vue'
-import Card from './components/Card.vue'
+import Card from './components/card.vue'
+import Header from './components/header.vue'
 import type { Product } from './types'
 
 const products = ref<Product[]>([])
@@ -37,13 +38,7 @@ onMounted(() => {
 
 <template>
   <main class="flex flex-col h-screen">
-    <header class="border-0 border-b border-gray-100 shadow-md py-4 px-4">
-      <div class="max-w-screen-xl w-full mx-auto">
-        <h1 class="text-xl font-medium text-gray-400">
-          <b class="text-green-600 font-bold">Vue</b> - Generators
-        </h1>
-      </div>
-    </header>
+    <Header />
     <section class="flex-1 overflow-auto h-[90vh] py-4 px-4 bg-gray-100" id="product-section">
       <div
         v-if="products.length > 0"

@@ -4,6 +4,7 @@ import Card from './components/Card.vue'
 import type { Product } from './types'
 
 const products = ref<Product[]>([])
+const selected = ref<Product | null>(null)
 
 async function* getProducts() {
   let skip = 0
@@ -48,8 +49,14 @@ onMounted(() => {
         v-if="products.length > 0"
         class="max-w-screen-xl w-full mx-auto grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
       >
-        <Card v-for="item in products" :product="item" />
+        <Card v-for="item in products" :product="item" @click="selected = item" />
       </div>
+    </section>
+    <section v-if="selected" class="fixed z-10 inset-0 bg-black/15 backdrop-blur-sm flex">
+      <button class="text-2xl text-white absolute z-20 p-2 top-3 right-3" @click="selected = null">
+        X
+      </button>
+      <img :src="selected.images[0]" v-bind:alt="selected.title" class="m-auto max-w-lg w-full" />
     </section>
   </main>
 </template>

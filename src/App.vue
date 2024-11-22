@@ -4,26 +4,17 @@ import Card from './components/card.vue'
 import Header from './components/header.vue'
 import Modal from './components/modal.vue'
 import type { Product } from './types'
+import { ProductService } from './services'
 
 const products = ref<Product[]>([])
 const productsGallery = ref<HTMLDivElement>()
 const selected = ref<Product | null>(null)
+const service = new ProductService()
 
-async function* getProducts() {
-  let skip = 0
-  while (true) {
-    const request = await fetch(`https://dummyjson.com/products?limit=30&skip=${skip}`)
-    const result = await request.json()
-    if (!result?.products || result.products?.length == 0) return []
-    yield result.products as Product[]
-    skip += 30
-  }
-}
-
-const paginateProducts = getProducts()
+const getProducts = service.getAll()
 
 onBeforeMount(async () => {
-  const result = await paginateProducts.next()
+  const result = await getProducts.next()
   products.value = [...products.value, ...result.value]
 })
 
@@ -31,7 +22,7 @@ onMounted(() => {
   const container = productsGallery.value!
   container.addEventListener('scroll', async () => {
     if (container.scrollHeight - container.scrollTop == container.offsetHeight) {
-      const result = await paginateProducts.next()
+      const result = await getProducts.next()
       products.value = [...products.value, ...result.value]
     }
   })

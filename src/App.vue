@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue'
 import Card from './components/card.vue'
 import Header from './components/header.vue'
 import Modal from './components/modal.vue'
@@ -10,22 +10,37 @@ const products = ref<Product[]>([])
 const productsGallery = ref<HTMLDivElement>()
 const selected = ref<Product | null>(null)
 const service = new ProductService()
-
 const getProducts = service.getAll()
 
 onBeforeMount(async () => {
   const result = await getProducts.next()
   products.value = [...products.value, ...result.value]
 })
+const isAtBottom = () => {
+  const container = productsGallery.value!
+  return container.scrollHeight - container.scrollTop === container.offsetHeight
+}
+
+const getNewProduts = async () => {
+  const result = await getProducts.next()
+  products.value = [...products.value, ...result.value]
+}
+
+async function handleScroll() {
+  if (isAtBottom()) await getNewProduts()
+}
 
 onMounted(() => {
-  const container = productsGallery.value!
-  container.addEventListener('scroll', async () => {
-    if (container.scrollHeight - container.scrollTop == container.offsetHeight) {
-      const result = await getProducts.next()
-      products.value = [...products.value, ...result.value]
-    }
-  })
+  const container = productsGallery.value
+  if (container) {
+    container.addEventListener('scroll', handleScroll)
+  }
+})
+onBeforeUnmount(() => {
+  const container = productsGallery.value
+  if (container) {
+    container.removeEventListener('scroll', handleScroll)
+  }
 })
 </script>
 
